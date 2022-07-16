@@ -7,13 +7,17 @@ const Spaceship = () => {
   const [loading, setLoading] = useState(true);
 
   const getSpaceShips = async () => {
-    setLoading(true);
-    const responseSpaceships = await fetch(
-      "https://retosofkau.herokuapp.com/api/spaceship"
-    );
-    const data = await responseSpaceships.json();
-    setSpacesShips(data.spaceships);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const responseSpaceships = await fetch(
+        "https://retosofkau.herokuapp.com/api/spaceship"
+      );
+      const data = await responseSpaceships.json();
+      setSpacesShips(data.spaceships);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {

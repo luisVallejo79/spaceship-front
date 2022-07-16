@@ -5,14 +5,12 @@ import {
   OutlinedInput,
   FormControl,
   InputLabel,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 
-const defaultValues = {
-  typeSpaceship: "",
-  loadCapacity: "",
-  orbitSpeed: "",
-  engineNumber: "",
-};
+import { defaultValues, valuesInput } from "./constants";
 
 const CreateSpaceship = () => {
   const [newSpaceship, setNewSpaceship] = useState(defaultValues);
@@ -20,15 +18,21 @@ const CreateSpaceship = () => {
 
   const createSpaceship = async () => {
     try {
-      console.log("nave", newSpaceship);
+      if (!newSpaceship.name) return;
       setLoading(true);
-      const responseSpaceships = await fetch(
-        "https://retosofkau.herokuapp.com/api/spaceship"
-      );
-      console.log("responseSpaceships", responseSpaceships);
+      await fetch("https://retosofkau.herokuapp.com/api/spaceship", {
+        method: "POST", // or 'PUT'
+        body: JSON.stringify(newSpaceship),
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
       setNewSpaceship(defaultValues);
       setLoading(false);
-    } catch (error) {}
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   const handleSpaceship = (event, prop) => {
@@ -36,7 +40,7 @@ const CreateSpaceship = () => {
     setNewSpaceship({ ...newSpaceship, [prop]: value });
   };
 
-  if (loading) return <>Cargando...</>;
+  if (loading) return <>Creando nave...</>;
 
   return (
     <Grid
@@ -47,71 +51,41 @@ const CreateSpaceship = () => {
       spacing={2}
     >
       <Grid item>
-        <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">
-            Tipo de nave
-          </InputLabel>
-          <OutlinedInput
-            required
-            id="outlined-adornment-weight"
-            value={newSpaceship.typeSpaceship}
-            onChange={(e) => handleSpaceship(e, "typeSpaceship")}
-            aria-describedby="outlined-weight-helper-text"
-            inputProps={{
-              "aria-label": "weight",
-            }}
-            label="   Tipo de nave"
-          />
-        </FormControl>
-        <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">
-            Capacidad de carga
-          </InputLabel>
-          <OutlinedInput
-            required
-            id="outlined-adornment-weight"
-            value={newSpaceship.loadCapacity}
-            onChange={(e) => handleSpaceship(e, "loadCapacity")}
-            aria-describedby="outlined-weight-helper-text"
-            inputProps={{
-              "aria-label": "weight",
-            }}
-            label="Capacidad de carga"
-          />
-        </FormControl>
-      </Grid>
-      <Grid item>
-        <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">
-            Velocidad de orbita
-          </InputLabel>
-          <OutlinedInput
-            required
-            id="outlined-adornment-weight"
-            value={newSpaceship.orbitSpeed}
-            onChange={(e) => handleSpaceship(e, "orbitSpeed")}
-            aria-describedby="outlined-weight-helper-text"
-            inputProps={{
-              "aria-label": "weight",
-            }}
-            label="Velocidad de orbita"
-          />
-        </FormControl>
-        <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">
-            Numero de motores
-          </InputLabel>
-          <OutlinedInput
-            required
-            id="outlined-adornment-weight"
-            value={newSpaceship.engineNumber}
-            onChange={(e) => handleSpaceship(e, "engineNumber")}
-            aria-describedby="outlined-weight-helper-text"
-            inputProps={{
-              "aria-label": "weight",
-            }}
-            label="Numero de motores"
-          />
+        {valuesInput.map((input, index) => (
+          <FormControl
+            sx={{ m: 1, width: "25ch" }}
+            variant="outlined"
+            key={index}
+          >
+            <InputLabel htmlFor="outlined-adornment-password">
+              {input.label}
+            </InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-weight"
+              value={newSpaceship[input.value]}
+              onChange={(e) => handleSpaceship(e, input.value)}
+              aria-describedby="outlined-weight-helper-text"
+              inputProps={{
+                "aria-label": "weight",
+              }}
+              label={input.label}
+            />
+          </FormControl>
+        ))}
+        <FormControl component="fieldset">
+          <FormGroup aria-label="position" row>
+            <FormControlLabel
+              onChange={() =>
+                setNewSpaceship({
+                  ...newSpaceship,
+                  active: !newSpaceship.active,
+                })
+              }
+              value={newSpaceship.active}
+              control={<Checkbox />}
+              label="la nave esta activa ?"
+            />
+          </FormGroup>
         </FormControl>
       </Grid>
       <Grid item>
