@@ -6,7 +6,7 @@ const App = () => {
   return (
     <section className="App">
       <div style={{ backgroundColor: "red" }}>
-        <h1>Naves</h1>
+        <h1>Prueba Naves</h1>
       </div>
       <Routes />
     </section>

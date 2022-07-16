@@ -23,10 +23,6 @@ const CreateSpaceship = () => {
       await fetch("https://retosofkau.herokuapp.com/api/spaceship", {
         method: "POST", // or 'PUT'
         body: JSON.stringify(newSpaceship),
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
       });
       setNewSpaceship(defaultValues);
       setLoading(false);
